@@ -1,0 +1,49 @@
+---
+dependency:
+  name: galaxy
+  options:
+    requirements-file: requirements.yml
+
+driver:
+  name: docker
+
+platforms:
+  - name: ubuntu-jammy
+    image: geerlingguy/docker-ubuntu2204-ansible:latest
+    pre_build_image: true
+  - name: ubuntu-noble
+    image: geerlingguy/docker-ubuntu2404-ansible:latest
+    pre_build_image: true
+  - name: ubuntu-resolute
+    image: geerlingguy/docker-ubuntu2604-ansible:latest
+    pre_build_image: true
+  - name: debian-bookworm
+    image: geerlingguy/docker-debian12-ansible:latest
+    pre_build_image: true
+  - name: debian-trixie
+    image: geerlingguy/docker-debian13-ansible:latest
+    pre_build_image: true
+
+provisioner:
+  name: ansible
+
+verifier:
+  name: testinfra
+  directory: tests/
+  options:
+    v: true
+    p: "no:cacheprovider"
+
+scenario:
+  test_sequence:
+    - dependency
+    - cleanup
+    - destroy
+    - syntax
+    - create
+    - prepare
+    - converge
+    - idempotence
+    - verify
+    - cleanup
+    - destroy

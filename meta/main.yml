@@ -1,0 +1,36 @@
+---
+dependencies: []
+
+galaxy_info:
+  namespace: realtime
+  role_name: docker_phpbb
+  author: "Bob Tanner"
+  company: "Real Time Enterprises, Inc."
+  issue_tracker_url: "https://github.com/basictheprogram/ansible-role-docker_phpbb/issues"
+  description: >-
+    Deploys phpBB3 and MySQL as Docker Compose services on a single Docker
+    host. Routes traffic via a Traefik reverse proxy managed separately by
+    ansible-role-traefik. The phpBB container image is built and published
+    by a dedicated image repository; this role only pulls and runs it.
+  license: "MIT"
+  min_ansible_version: "2.20"
+  platforms:
+    - name: Ubuntu
+      versions:
+        - jammy    # 22.04 LTS, standard support until April 2027
+        - noble    # 24.04 LTS, standard support until April 2029
+        - resolute # 26.04 LTS, standard support until April 2031
+    - name: Debian
+      versions:
+        - bookworm # 12, current stable
+        - trixie   # 13, next stable
+  galaxy_tags:
+    - phpbb
+    - forum
+    - mysql
+    - docker
+    - php
+    - apache
+    - compose
+    - ubuntu
+    - debian

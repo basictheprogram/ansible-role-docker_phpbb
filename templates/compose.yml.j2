@@ -1,0 +1,92 @@
+---
+services:
+  mysql:
+    container_name: "{{ phpbb_mysql_container_name }}"
+    image: "{{ phpbb_mysql_image }}"
+    restart: "{{ phpbb_mysql_restart_policy }}"
+
+    environment:
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
+      MYSQL_DATABASE: "{{ phpbb_mysql_database }}"
+      MYSQL_USER: "{{ phpbb_mysql_user }}"
+      MYSQL_PASSWORD: "${MYSQL_PASSWORD}"
+      TZ: "{{ phpbb_tz }}"
+
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+    volumes:
+      - phpbb-mysql-data:/var/lib/mysql
+
+    labels:
+      traefik.enable: "false"
+
+    networks:
+      - {{ phpbb_traefik_docker_network }}
+
+    logging:
+      driver: {{ phpbb_compose_log_driver }}
+      options:
+        tag: "{{ phpbb_journald_tag_mysql }}"
+
+  phpbb:
+    container_name: "{{ phpbb_container_name }}"
+    image: "{{ phpbb_image }}"
+    restart: "{{ phpbb_restart_policy }}"
+
+    environment:
+      PHPBB_DATABASE_HOST: "{{ phpbb_database_host }}"
+      PHPBB_DATABASE_PORT_NUMBER: "{{ phpbb_database_port }}"
+      PHPBB_DATABASE_USER: "{{ phpbb_database_user }}"
+      PHPBB_DATABASE_NAME: "{{ phpbb_database_name }}"
+      PHPBB_DATABASE_PASSWORD: "${PHPBB_DATABASE_PASSWORD}"
+      APACHE_SERVER_ADMIN: "{{ phpbb_apache_server_admin }}"
+      TZ: "{{ phpbb_tz }}"
+
+    depends_on:
+      - mysql
+
+    volumes:
+      - phpbb_config:/config-volume
+      - phpbb_files:/var/www/html/phpBB3/files
+      - phpbb_images:/var/www/html/phpBB3/images
+      - phpbb_store:/var/www/html/phpBB3/store
+      - phpbb_ext:/var/www/html/phpBB3/ext
+
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.phpbb3.rule: "Host(`{{ phpbb_domain }}`)"
+      traefik.http.routers.phpbb3.entrypoints: "{{ phpbb_traefik_entrypoint }}"
+      traefik.http.routers.phpbb3.tls: "true"
+      traefik.http.routers.phpbb3.tls.certresolver: "{{ phpbb_traefik_certresolver }}"
+      traefik.http.services.phpbb3.loadbalancer.server.port: "80"
+
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 15s
+
+    networks:
+      - {{ phpbb_traefik_docker_network }}
+
+    logging:
+      driver: {{ phpbb_compose_log_driver }}
+      options:
+        tag: "{{ phpbb_journald_tag_phpbb }}"
+
+networks:
+  {{ phpbb_traefik_docker_network }}:
+    external: true
+
+volumes:
+  phpbb-mysql-data:
+  phpbb_config:
+  phpbb_files:
+  phpbb_images:
+  phpbb_store:
+  phpbb_ext:

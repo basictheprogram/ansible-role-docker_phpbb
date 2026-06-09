@@ -1,0 +1,7 @@
+---
+- name: Service | bring up phpBB stack via docker compose
+  community.docker.docker_compose_v2:
+    project_src: "{{ phpbb_compose_dir }}"
+    state: present
+    pull: missing
+  tags: molecule-notest

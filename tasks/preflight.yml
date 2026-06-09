@@ -1,0 +1,70 @@
+---
+- name: Preflight | Ansible version is sufficient
+  ansible.builtin.assert:
+    that:
+      - ansible_version.full is version('2.20', '>=')
+    fail_msg: "ansible-role-docker_phpbb requires ansible-core >= 2.20 (found {{ ansible_version.full }})"
+    quiet: true
+
+- name: Preflight | phpbb_domain is set
+  ansible.builtin.assert:
+    that:
+      - phpbb_domain | length > 0
+    fail_msg: "phpbb_domain must be set (e.g. forum.example.com)"
+    quiet: true
+
+- name: Preflight | MySQL root password is set
+  ansible.builtin.assert:
+    that:
+      - phpbb_mysql_root_password | length > 0
+    fail_msg: "phpbb_mysql_root_password must be vaulted in host_vars and must not be empty"
+    quiet: true
+  no_log: true
+
+- name: Preflight | MySQL user password is set
+  ansible.builtin.assert:
+    that:
+      - phpbb_mysql_password | length > 0
+    fail_msg: "phpbb_mysql_password must be vaulted in host_vars and must not be empty"
+    quiet: true
+  no_log: true
+
+- name: Preflight | phpBB database password is set
+  ansible.builtin.assert:
+    that:
+      - phpbb_database_password | length > 0
+    fail_msg: "phpbb_database_password must be vaulted in host_vars and must not be empty"
+    quiet: true
+  no_log: true
+
+- name: Preflight | Docker socket exists
+  ansible.builtin.stat:
+    path: /var/run/docker.sock
+  register: _phpbb_docker_sock
+
+- name: Preflight | Docker socket is reachable
+  ansible.builtin.assert:
+    that:
+      - _phpbb_docker_sock.stat.exists
+      - _phpbb_docker_sock.stat.issock
+    fail_msg: "/var/run/docker.sock not found or not a socket; ensure Docker Engine is installed and running"
+    quiet: true
+  tags: molecule-notest
+
+- name: Preflight | Traefik Docker network exists
+  ansible.builtin.command:
+    cmd: docker network inspect {{ phpbb_traefik_docker_network }}
+  register: _phpbb_traefik_network
+  changed_when: false
+  failed_when: false
+  tags: molecule-notest
+
+- name: Preflight | Traefik network is present
+  ansible.builtin.assert:
+    that:
+      - _phpbb_traefik_network.rc == 0
+    fail_msg: >-
+      Docker network '{{ phpbb_traefik_docker_network }}' does not exist.
+      Apply ansible-role-traefik before this role.
+    quiet: true
+  tags: molecule-notest

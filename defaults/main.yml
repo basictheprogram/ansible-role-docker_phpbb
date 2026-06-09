@@ -1,0 +1,57 @@
+---
+# Image and runtime — phpBB
+phpbb_image: "basictheprogram/crossfire-phpbb3:latest"
+phpbb_container_name: phpbb
+phpbb_restart_policy: unless-stopped
+
+# Image and runtime — MySQL
+phpbb_mysql_image: "mysql:lts"
+phpbb_mysql_container_name: phpbb-mysql
+phpbb_mysql_restart_policy: unless-stopped
+
+# Filesystem layout on the host
+phpbb_compose_dir: /opt/phpbb
+
+# Networking
+# Must match traefik_docker_network in ansible-role-traefik.
+# The network is created by that role; this role only attaches to it.
+phpbb_traefik_docker_network: traefik_proxy
+
+# Timezone
+phpbb_tz: UTC
+
+# Logging
+phpbb_compose_log_driver: journald
+phpbb_journald_tag_phpbb: "phpbb.{{ inventory_hostname }}"
+phpbb_journald_tag_mysql: "phpbb-mysql.{{ inventory_hostname }}"
+
+# Domain
+phpbb_domain: ""  # required; e.g. forum.example.com
+
+# Traefik routing
+phpbb_traefik_entrypoint: websecure
+phpbb_traefik_certresolver: letsencrypt
+
+# MySQL — non-secret configuration
+phpbb_mysql_database: phpbb3
+phpbb_mysql_user: phpbb
+phpbb_mysql_host_port: 3306
+
+# MySQL — secrets (must be vaulted in host_vars; never set here)
+phpbb_mysql_root_password: ""
+phpbb_mysql_password: ""
+
+# phpBB — non-secret configuration
+phpbb_database_host: "{{ phpbb_mysql_container_name }}"
+phpbb_database_port: "{{ phpbb_mysql_host_port }}"
+phpbb_database_name: "{{ phpbb_mysql_database }}"
+phpbb_database_user: "{{ phpbb_mysql_user }}"
+phpbb_apache_server_admin: "webmaster@localhost"
+
+# phpBB — secrets (must be vaulted in host_vars; never set here)
+phpbb_database_password: ""
+
+# Verification
+phpbb_verify_healthcheck: true
+phpbb_verify_healthcheck_retries: 10
+phpbb_verify_healthcheck_delay: 15  # seconds between retries

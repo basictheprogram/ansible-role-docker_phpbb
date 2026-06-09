@@ -1,0 +1,14 @@
+---
+# Self-contained molecule test fixtures — no real hostnames or credentials.
+
+phpbb_domain: phpbb.molecule.test
+phpbb_tz: UTC
+phpbb_apache_server_admin: test@molecule.test
+
+# Passwords: safe dummy values for molecule only — never use in production.
+phpbb_mysql_root_password: molecule-root-password
+phpbb_mysql_password: molecule-phpbb-password
+phpbb_database_password: molecule-phpbb-password
+
+# Disable live Docker operations in molecule (no real Docker daemon in CI images).
+phpbb_verify_healthcheck: false

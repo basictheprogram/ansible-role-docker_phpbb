@@ -1,0 +1,12 @@
+---
+- name: Preflight checks
+  ansible.builtin.import_tasks: preflight.yml
+
+- name: Install compose directory and config files
+  ansible.builtin.import_tasks: install.yml
+
+- name: Start phpBB stack
+  ansible.builtin.import_tasks: service.yml
+
+- name: Verify containers are healthy
+  ansible.builtin.import_tasks: verify.yml
