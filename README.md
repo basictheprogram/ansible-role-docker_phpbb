@@ -8,7 +8,7 @@
 
 Deploys [phpBB3](https://www.phpbb.com/) and MySQL as Docker Compose services
 on a single Docker host. Assumes [Traefik](https://traefik.io/) is already
-running and managing TLS, deployed via `ansible-role-traefik`.
+running and managing TLS, deployed via [`ansible-role-traefik`](https://github.com/basictheprogram/ansible-role-traefik).
 
 > For full architecture, schemas, and design decisions see [DESIGN.md](DESIGN.md).
 
@@ -17,7 +17,7 @@ running and managing TLS, deployed via `ansible-role-traefik`.
 - Ansible core >= 2.20
 - `community.docker` collection
 - Docker Engine installed and running on the target host
-- `ansible-role-traefik` applied before this role (creates the Docker network
+- [`ansible-role-traefik`](https://github.com/basictheprogram/ansible-role-traefik) applied before this role (creates the Docker network
   and starts Traefik)
 
 ## Supported Platforms
@@ -40,7 +40,7 @@ running and managing TLS, deployed via `ansible-role-traefik`.
 | `phpbb_mysql_container_name` | `phpbb-mysql` | MySQL container name |
 | `phpbb_mysql_restart_policy` | `unless-stopped` | MySQL restart policy |
 | `phpbb_compose_dir` | `/opt/phpbb` | Host directory for compose files |
-| `phpbb_traefik_docker_network` | `traefik_proxy` | External Docker network name; must match `traefik_docker_network` in ansible-role-traefik |
+| `phpbb_traefik_docker_network` | `traefik_proxy` | External Docker network name; must match `traefik_docker_network` in [`ansible-role-traefik`](https://github.com/basictheprogram/ansible-role-traefik) |
 | `phpbb_tz` | `UTC` | Timezone for both containers |
 | `phpbb_compose_log_driver` | `journald` | Docker logging driver |
 | `phpbb_journald_tag_phpbb` | `phpbb.{{ inventory_hostname }}` | journald tag for phpBB container |
@@ -124,4 +124,4 @@ MIT
 
 ## Author
 
-Bob Tanner — Real Time Enterprises, Inc.
+Bob Tanner

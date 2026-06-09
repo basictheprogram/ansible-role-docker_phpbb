@@ -15,7 +15,7 @@ Traefik configuration, and service runtime into one repository.
   target host.
 * Secrets live in `ansible-vault`-encrypted `host_vars/<host>/vault.yml`.
   No credentials are stored in plaintext in any tracked file.
-* The role integrates cleanly with `ansible-role-traefik`: it attaches to
+* The role integrates cleanly with [`ansible-role-traefik`](https://github.com/basictheprogram/ansible-role-traefik): it attaches to
   the Docker network that role creates and emits the Traefik labels that
   role reads. No Traefik configuration lives in this role.
 * The phpBB container image is built and published by a dedicated image
@@ -85,7 +85,7 @@ to a digest or semver tag in `host_vars` once the image pipeline is stable.
 
 ### Network
 
-`ansible-role-traefik` creates and owns the `traefik_proxy` Docker network.
+[`ansible-role-traefik`](https://github.com/basictheprogram/ansible-role-traefik) creates and owns the `traefik_proxy` Docker network.
 This role only attaches to it. The network name is configurable via
 `phpbb_traefik_docker_network` (default: `traefik_proxy`) to match
 `traefik_docker_network` in `ansible-role-traefik`. Preflight asserts the
@@ -156,7 +156,7 @@ MySQL has `traefik.enable=false`.
 
 | Variable | Default | Notes |
 |---|---|---|
-| `phpbb_traefik_docker_network` | `traefik_proxy` | Must match `traefik_docker_network` in ansible-role-traefik |
+| `phpbb_traefik_docker_network` | `traefik_proxy` | Must match `traefik_docker_network` in [`ansible-role-traefik`](https://github.com/basictheprogram/ansible-role-traefik) |
 
 ### Runtime
 
@@ -265,7 +265,7 @@ verify.yml
 This role is consumed from a playbooks repo. The consuming host must have:
 
 * Docker Engine installed and running.
-* `ansible-role-traefik` applied first (creates the `traefik_proxy` network
+* [`ansible-role-traefik`](https://github.com/basictheprogram/ansible-role-traefik) applied first (creates the `traefik_proxy` network
   and starts Traefik).
 * `host_vars/<host>/vault.yml` with the three secret variables, encrypted
   with `ansible-vault`.
